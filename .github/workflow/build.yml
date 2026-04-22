@@ -1,0 +1,65 @@
+name: Build Tweak
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # cho phép trigger thủ công từ GitHub UI
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      # 1. Checkout code
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Cache Theos để không phải download mỗi lần
+      - name: Cache Theos
+        uses: actions/cache@v4
+        id: theos-cache
+        with:
+          path: ${{ github.workspace }}/theos
+          key: theos-${{ runner.os }}-v1
+
+      # 3. Install Theos nếu chưa có trong cache
+      - name: Install Theos
+        if: steps.theos-cache.outputs.cache-hit != 'true'
+        run: |
+          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+
+      # 4. Set THEOS env cho tất cả steps sau
+      - name: Set THEOS path
+        run: echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_ENV
+
+      # 5. Install Theos SDKs (iPhone SDK)
+      - name: Download iOS SDK
+        run: |
+          curl -LO https://github.com/theos/sdks/releases/latest/download/iPhoneOS16.5.sdk.tar.xz
+          mkdir -p $THEOS/sdks
+          tar -xf iPhoneOS16.5.sdk.tar.xz -C $THEOS/sdks
+
+      # 6. Build
+      - name: Build .deb
+        run: |
+          make clean
+          make package FINALPACKAGE=1 FOR_RELEASE=1
+
+      # 7. Upload artifact — file .deb download được từ Actions tab
+      - name: Upload .deb
+        uses: actions/upload-artifact@v4
+        with:
+          name: tweak-deb
+          path: packages/*.deb
+          retention-days: 30
+
+      # 8. (Optional) Auto-release khi push tag vd: git tag v1.0 && git push --tags
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: packages/*.deb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
