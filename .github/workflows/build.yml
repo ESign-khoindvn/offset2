@@ -25,25 +25,35 @@ jobs:
         id: theos-cache
         with:
           path: ~/theos
-          key: theos-${{ runner.os }}-v2
+          key: theos-${{ runner.os }}-v3
 
-      # Install Theos (chỉ khi không có cache)
+      # Install Theos
       - name: Install Theos
         if: steps.theos-cache.outputs.cache-hit != 'true'
         run: |
           set -e
           git clone --recursive https://github.com/theos/theos.git $HOME/theos
-          ls $HOME/theos/makefiles/common.mk
 
-      # Cache SDK riêng
+      # Install ldid (signing tool required by Theos)
+      - name: Install ldid
+        run: |
+          brew install ldid || true
+          # Fallback: download prebuilt binary if brew fails
+          if ! command -v ldid &>/dev/null; then
+            curl -L https://github.com/ProcursusTeam/ldid/releases/latest/download/ldid_macosx_x86_64 -o /usr/local/bin/ldid
+            chmod +x /usr/local/bin/ldid
+          fi
+          ldid -v || echo "ldid installed"
+
+      # Cache iOS SDK
       - name: Cache iOS SDK
         uses: actions/cache@v4
         id: sdk-cache
         with:
           path: ~/theos/sdks/iPhoneOS16.5.sdk
-          key: sdk-iPhoneOS16.5
+          key: sdk-iPhoneOS16.5-v1
 
-      # Download SDK (chỉ khi không có cache)
+      # Download SDK
       - name: Download iOS SDK
         if: steps.sdk-cache.outputs.cache-hit != 'true'
         run: |
@@ -53,12 +63,12 @@ jobs:
             https://github.com/theos/sdks/releases/latest/download/iPhoneOS16.5.sdk.tar.xz
           tar -xf /tmp/sdk.tar.xz -C $HOME/theos/sdks
 
-      # Verify Theos OK
-      - name: Verify Theos
+      # Verify
+      - name: Verify tools
         run: |
           echo "THEOS=$THEOS"
           ls $THEOS/makefiles/common.mk
-          ls $THEOS/makefiles/tweak.mk
+          which ldid && ldid -v || true
 
       # Build
       - name: Build .deb
@@ -66,7 +76,7 @@ jobs:
           make clean
           make package FINALPACKAGE=1 FOR_RELEASE=1
 
-      # Upload .deb artifact
+      # Upload artifact
       - name: Upload .deb
         uses: actions/upload-artifact@v4
         with:
@@ -74,7 +84,7 @@ jobs:
           path: packages/*.deb
           retention-days: 30
 
-      # Auto-release khi push tag
+      # Auto release on tag
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
