@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string>
+#include <vector>
 #include <inttypes.h>
 #include <codecvt>
 #include <locale>
