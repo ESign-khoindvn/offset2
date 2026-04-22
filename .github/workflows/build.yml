@@ -5,57 +5,76 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
-  workflow_dispatch:  # cho phép trigger thủ công từ GitHub UI
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: macos-latest
 
     steps:
-      # 1. Checkout code
       - name: Checkout
         uses: actions/checkout@v4
 
-      # 2. Cache Theos để không phải download mỗi lần
+      # Set THEOS path TRƯỚC — install script đọc biến này
+      - name: Set THEOS env
+        run: echo "THEOS=$HOME/theos" >> $GITHUB_ENV
+
+      # Cache Theos
       - name: Cache Theos
         uses: actions/cache@v4
         id: theos-cache
         with:
-          path: ${{ github.workspace }}/theos
-          key: theos-${{ runner.os }}-v1
+          path: ~/theos
+          key: theos-${{ runner.os }}-v2
 
-      # 3. Install Theos nếu chưa có trong cache
+      # Install Theos (chỉ khi không có cache)
       - name: Install Theos
         if: steps.theos-cache.outputs.cache-hit != 'true'
         run: |
-          bash -c "$(curl -fsSL https://raw.githubusercontent.com/theos/theos/master/bin/install-theos)"
+          set -e
+          git clone --recursive https://github.com/theos/theos.git $HOME/theos
+          ls $HOME/theos/makefiles/common.mk
 
-      # 4. Set THEOS env cho tất cả steps sau
-      - name: Set THEOS path
-        run: echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_ENV
+      # Cache SDK riêng
+      - name: Cache iOS SDK
+        uses: actions/cache@v4
+        id: sdk-cache
+        with:
+          path: ~/theos/sdks/iPhoneOS16.5.sdk
+          key: sdk-iPhoneOS16.5
 
-      # 5. Install Theos SDKs (iPhone SDK)
+      # Download SDK (chỉ khi không có cache)
       - name: Download iOS SDK
+        if: steps.sdk-cache.outputs.cache-hit != 'true'
         run: |
-          curl -LO https://github.com/theos/sdks/releases/latest/download/iPhoneOS16.5.sdk.tar.xz
-          mkdir -p $THEOS/sdks
-          tar -xf iPhoneOS16.5.sdk.tar.xz -C $THEOS/sdks
+          set -e
+          mkdir -p $HOME/theos/sdks
+          curl -L -o /tmp/sdk.tar.xz \
+            https://github.com/theos/sdks/releases/latest/download/iPhoneOS16.5.sdk.tar.xz
+          tar -xf /tmp/sdk.tar.xz -C $HOME/theos/sdks
 
-      # 6. Build
+      # Verify Theos OK
+      - name: Verify Theos
+        run: |
+          echo "THEOS=$THEOS"
+          ls $THEOS/makefiles/common.mk
+          ls $THEOS/makefiles/tweak.mk
+
+      # Build
       - name: Build .deb
         run: |
           make clean
           make package FINALPACKAGE=1 FOR_RELEASE=1
 
-      # 7. Upload artifact — file .deb download được từ Actions tab
+      # Upload .deb artifact
       - name: Upload .deb
         uses: actions/upload-artifact@v4
         with:
-          name: tweak-deb
+          name: tweak-deb-${{ github.run_number }}
           path: packages/*.deb
           retention-days: 30
 
-      # 8. (Optional) Auto-release khi push tag vd: git tag v1.0 && git push --tags
+      # Auto-release khi push tag
       - name: Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
