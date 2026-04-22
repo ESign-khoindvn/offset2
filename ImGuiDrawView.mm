@@ -98,39 +98,35 @@ static bool MenDeal = true;
 
 
     hackmapoffset = methodAccessSystem2.getClass("NucleusDrive.Logic", "LVActorLinker").getMethod("SetVisible", 3);
-    // ── Camera hooks ──────────────────────────────────────────────────────
-    HOOK(ENCRYPTOFFSET("0x61E0F48"), _cam, cam);                       // GetCameraHeightRateValue
-    HOOK(ENCRYPTOFFSET("0x61DFF50"), _Update, Update);                 // Camera Update
-    HOOK(ENCRYPTOFFSET("0x61E1370"), _highrate, highrate);             // OnCameraHeightChanged
 
-    // ── Aim hooks ─────────────────────────────────────────────────────────
-    HOOK(ENCRYPTOFFSET("0x59EC6F4"), IsSmartUse, _IsSmartUse);                                         // IsSmartUse
-    HOOK(ENCRYPTOFFSET("0x57CC0F4"), get_IsUseCameraMoveWithIndicator, _get_IsUseCameraMoveWithIndicator); // CameraMove indicator
-    HOOK(ENCRYPTOFFSET("0x64C773C"), IsDistanceLowerEqualAsAttacker, old_IsDistanceLowerEqualAsAttacker);  // Aim radius
-    HOOK(ENCRYPTOFFSET("0x5AD7B84"), IsUseSkillJoystick, _IsUseSkillJoystick);                        // Skill slot tracker
+    // ── Camera hooks — comment để test, bật dần từng cái
+//    HOOK(ENCRYPTOFFSET("0x61E0F48"), _cam, cam);
+//    HOOK(ENCRYPTOFFSET("0x61DFF50"), _Update, Update);
+//    HOOK(ENCRYPTOFFSET("0x61E1370"), _highrate, highrate);
 
-    // ── Misc hooks ────────────────────────────────────────────────────────
-    HOOK(ENCRYPTOFFSET("0x5A6A764"), SetPlayerName, old_SetPlayerName); // Ẩn Tên
-    HOOK(ENCRYPTOFFSET("0x547FB70"), _Autowin, Autowin);                // Auto Win
+    // ── Aim hooks — comment để test
+//    HOOK(ENCRYPTOFFSET("0x59EC6F4"), IsSmartUse, _IsSmartUse);
+//    HOOK(ENCRYPTOFFSET("0x57CC0F4"), get_IsUseCameraMoveWithIndicator, _get_IsUseCameraMoveWithIndicator);
+//    HOOK(ENCRYPTOFFSET("0x64C773C"), IsDistanceLowerEqualAsAttacker, old_IsDistanceLowerEqualAsAttacker);
+//    HOOK(ENCRYPTOFFSET("0x5AD7B84"), IsUseSkillJoystick, _IsUseSkillJoystick);
 
-    // ── Map hack ──────────────────────────────────────────────────────────
-    HOOK(hackmapoffset, LActorRoot_Visible, _LActorRoot_Visible);       // SetVisible (Hack Map)
+    // ── Misc hooks — comment để test
+//    HOOK(ENCRYPTOFFSET("0x5A6A764"), SetPlayerName, old_SetPlayerName);
+//    HOOK(ENCRYPTOFFSET("0x547FB70"), _Autowin, Autowin);
 
-    // ── FPS unlock — tạm disable, verify signature trước
+    // ── Map hack — active (dynamic offset, luôn an toàn)
+    HOOK(hackmapoffset, LActorRoot_Visible, _LActorRoot_Visible);
+
+    // ── New hooks — tạm disable
 //    HOOK(ENCRYPTOFFSET("0x4e7b530"), get_Supported90FPSMode, _get_Supported90FPSMode);
 //    HOOK(ENCRYPTOFFSET("0x4e7b610"), get_Supported60FPSMode, _get_Supported60FPSMode);
-
-    // ── AnoSDK bypass — tạm disable, [extern] cần check MethodInfo* param
 //    HOOK(ENCRYPTOFFSET("0x68ec1ec"), AnoSDKInitEx, _AnoSDKInitEx);
 //    HOOK(ENCRYPTOFFSET("0x68ec534"), AnoSDKOnResume, _AnoSDKOnResume);
-
-    // ── Frame sync bypass — tạm disable, verify signature
 //    HOOK(ENCRYPTOFFSET("0x47c9a4c"), CalcuBattleHash, _CalcuBattleHash);
 //    HOOK(ENCRYPTOFFSET("0x47c9ce8"), SampleAndSendFrameSyncData, _SampleAndSendFrameSyncData);
-
-    // ── Rank patch — tạm disable, verify signature
 //    HOOK(ENCRYPTOFFSET("0x5415ef0"), setCurrentRankDetail, _setCurrentRankDetail);
 }
+
 
 
 
