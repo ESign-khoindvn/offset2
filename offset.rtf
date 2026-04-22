@@ -1,0 +1,159 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2757
+\cocoatextscaling1\cocoaplatform1{\fonttbl\f0\fnil\fcharset0 AnthropicSansMobileVariable-TextRegular_wght_opsz110000;}
+{\colortbl;\red255\green255\blue255;\red20\green20\blue19;}
+{\*\expandedcolortbl;;\cssrgb\c7800\c7800\c7400;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\slleading53\pardirnatural\partightenfactor0
+
+\f0\fs34 \cf2 ====================================================================================================\
+  PATCH ANALYSIS \'97 117 RVA vs dump.cs\
+  Game: AOV (Arena of Valor) \'97 UnityFramework\
+====================================================================================================\
+\
+\uc0\u12304 AnoSDK (Anti-cheat Engine)\u12305   (5 patched)\
+  --------------------------------------------------------------------------------\
+  0x068ec16c  InitEx(int gameId, string key)\
+  0x068ec1ec  AnoSDKInitEx(int gameID, string key)  [extern]\
+  0x068ec534  AnoSDKOnResume()  [extern]\
+  0x068ec76c  AnoSDKDelReportData4(IntPtr info)  [extern]\
+  0x068ecd70  AnoSDKFree(IntPtr info)  [extern]\
+\
+\uc0\u12304 LSynchrReport (Frame Sync / Hash Check)\u12305   (4 patched)\
+  --------------------------------------------------------------------------------\
+  0x04a2d0f0  Reset()\
+  0x04a2e8e4  CloseUpload()\
+  0x04a2ecc8  OnNotifyHashCheckUnsyncByDs(EnginePipeCmd)\
+  0x04a2ef50  DequeHashValueByFrameNum(uint nFrameNum)\
+\
+\uc0\u12304 LFrameSyncBattleLogic (Battle Integrity)\u12305   (3 patched)\
+  --------------------------------------------------------------------------------\
+  0x047c9368  OnActorRevive(ref LDefaultGameEventParam)\
+  0x047c9a4c  CalcuBattleHash()\
+  0x047c9ce8  SampleAndSendFrameSyncData(bool isFightOver)\
+\
+\uc0\u12304 BattleStatistic (Report / Verify)\u12305   (6 patched)\
+  --------------------------------------------------------------------------------\
+  0x043db754  IsNeedReportCompetitionData()\
+  0x043f12a4  ResetCheetCommandSetWarmBattleResultInfo()\
+  0x043f2900  CreatePetData(...)\
+  0x043fe144  CreateDragonStatistInfo(...)\
+  0x04404c78  GeneralShenFuData(...)\
+  0x04405fbc  VerifyCondition(...)\
+\
+\uc0\u12304 ApolloEventReport / IApolloHelper (Analytics)\u12305   (3 patched)\
+  --------------------------------------------------------------------------------\
+  0x05330c34  ReportEventOpenApp(List<string> channelList)\
+  0x054a09b4  AddCacheReport(string eventName, ...)\
+  0x054a33b0  OnLogin(GCloudChannel platform, ...)\
+\
+\uc0\u12304 FirebasePush (Push Notification / Analytics)\u12305   (3 patched)\
+  --------------------------------------------------------------------------------\
+  0x0575f7f0  TryReportInfo()\
+  0x0576035c  reportInfo()  [private]\
+  0x0576120c  GetPushExtraDictObjects(...)\
+\
+\uc0\u12304 LobbyMsgHandler (Lobby Telemetry)\u12305   (2 patched)\
+  --------------------------------------------------------------------------------\
+  0x05fc2014  TrySkipGuideLevel1()\
+  0x05fc21dc  onTriggerSecurityDataReport(CSPkg msg)\
+\
+\uc0\u12304 SettlementSystem (Post-match Report)\u12305   (3 patched)\
+  --------------------------------------------------------------------------------\
+  0x056a9250  cacheGameInfoData()\
+  0x056a9828  ReportTLogDataToLobby(bool bBackGuild)\
+  0x056b40e4  CommonOnRequestAddMatchBlack(...)\
+\
+\uc0\u12304 CChatController / CChatNetUT (Chat & Complaint)\u12305   (5 patched)\
+  --------------------------------------------------------------------------------\
+  0x00e953ac  CChatNetUT_On_Chat_NTFMainThread(CSPkg)\
+  0x00e95418  CChatNetUT_On_Chat_Complaint_NTF(CSPkg)\
+  0x00e95484  CChatNetUT_On_Chat_Complaint_RSP(CSPkg)\
+  0x00ea9954  RspSetChatRegion(CSPkg)\
+  0x00ea9a80  On_Chat_Complaint_NTF(CSPkg)\
+\
+\uc0\u12304 InBattleMsg Chat / Complaint\u12305   (13 patched)\
+  --------------------------------------------------------------------------------\
+  0x0493be60  Send_Loaidng_Chat(...)\
+  0x0493c068  SendInBattleMsg_TranslateChat(...)\
+  0x0582e0c8  SendInBattleMsg_PreConfig(...)\
+  0x0582e394  OnSendInBattleMsg_InputChat(...)\
+  0x0582e508  SendInBattleMsg_ChatComplaint(ulong id)\
+  0x049b2d70  Handle_SendSendInLoaing_LikeChat(EnginePipeCmd)\
+  0x049b2e88  Handle_SendInBattleMsg_ChatComplaint(EnginePipeCmd)\
+  0x04a27430  Handle_SendSendInLoaing_LikeChat(EnginePipeCmd)\
+  0x04a27538  Handle_SendInBattleMsg_ChatComplaint(EnginePipeCmd)\
+  0x05f50908  Handle_On_Chat_NTF(EnginePipeCmd)\
+  0x05f50b50  Handle_On_ChatComplaint_NTF(EnginePipeCmd)\
+  0x05f50d98  Handle_On_ChatComplaint_RSP(EnginePipeCmd)\
+  0x049ee3ac  On_ChatRealtimeVoice_Complaint_RSP(CSPkg)\
+\
+\uc0\u12304 CRoleInfo (Player Data)\u12305   (6 patched)\
+  --------------------------------------------------------------------------------\
+  0x05a2a314  GetHaveHeroCount(...)\
+  0x05a2b080  GetHeroSkinCount(...)\
+  0x05a2b4a0  IsFreeHeroAndSelfDontHave(uint heroId)\
+  0x05a2eed4  set_GameVipScore(uint value)\
+  0x05a3baa8  IsCanBuySkinButNotHaveHero(uint heroId, uint skinId)\
+  0x05a3cdbc  SetVipFlags(uint flags)\
+\
+\uc0\u12304 GameSettings (FPS / Device)\u12305   (6 patched)\
+  --------------------------------------------------------------------------------\
+  0x04e7b530  get_Supported90FPSMode()\
+  0x04e7b610  get_Supported60FPSMode()\
+  0x04e90658  CheckDeviceSupport60FPS_IOS()\
+  0x04e908a8  get_SupportedBoth60FPS_CameraHeight()\
+  0x04e90bb0  ResetRenderAndParticleQuality()\
+  0x04e946ec  InitAfterBaseSystemInitialiazed()\
+\
+\uc0\u12304 Misc\u12305   (51 patched)\
+  --------------------------------------------------------------------------------\
+  0x004143d0  CmdPkg.set_PrmPlayerChoseEquipSkill(...)\
+  0x00887aec  CSDT_CHEATCMD_DETAIL.get_stAddKingTitle()\
+  0x03da2184  GamePlayerCenter.GetAllPlayersWithoutComputer()\
+  0x04490518  HangUpStaticInfoState.HandleLeave(ulong curtime)\
+  0x044a3cc4  CSoccerStatistic.OnScoreChanged(...)\
+  0x0460a634  LActorRoot.SendInitEvent()\
+  0x0460ae44  LActorRoot.ReleaseComponents()\
+  0x04616cdc  LGameActorMgr.FightOver()\
+  0x0462bda0  LVActorLinker.LeaveBattleField()\
+  0x048f4490  SkillSlot.NtfSkillHitCountChange(int skillTag)\
+  0x049dd640  LFramework.SetMainBattleLogic(...)\
+  0x049ddf50  LFramework.InitLogic()\
+  0x049fd510  LDedicatedSvrConnector.UnInit()\
+  0x049fe39c  LDedicatedSvrConnector.ClearCache()\
+  0x04a02ba4  LNetwork.Handle_MsgGameDataReport(EnginePipeCmd)\
+  0x04cd4128  CUIUtility.RemoveQuadTag(string str)\
+  0x04eb4c54  GameFramework.StartEssentialSystemsFor_Splash()\
+  0x051ad78c  CSkinInfo.ResolveHeroSkin(...)\
+  0x052c59ec  HeroSelectBanPickWindow.OnPatSkinUpdate()\
+  0x0535f08c  HeroSelectNormalWindow.HeroSelect_OnSkinSelect(uint skinID)\
+  0x053e9c48  CPlayerProfile.get_FabulousCnt()\
+  0x05415ef0  CLadderSystem.setCurrentRankDetail(uint score)\
+  0x0548dc28  EchoPing.Update()\
+  0x05691e08  SettlementHelper.SetPlayerWorldId(uint worldId)\
+  0x0578e11c  CBattleSystem.FixedFreqUpdate(int delta)\
+  0x0582664c  MinimapSys.OnActorDamage(ref HurtEventResultInfo)\
+  0x058ad158  CSkillButtonManager.PreUpdate()\
+  0x05a45a08  CRoleInfoManager.CreateRoleInfo(...)\
+  0x05a7ad74  PVPLoadingView.IsPvPChildSystemDlcDownloaded()\
+  0x05a7ef74  PVPLoadingView.TryShowMicPursuerSkillInfo(...)\
+  0x05a7f704  PVPLoadingView.CanPlayerShowLegendRank(...)\
+  0x05c0668c  TssdkSys.OnAccountLogin()\
+  0x05dc8780  SLevelContext.get_isWheelMode()\
+  0x05e0a154  SkillControlIndicator.GetUseSkillPosition(...)\
+  0x05e2a250  SkillSlot.InitSkillControlIndicator(SkillSlot)\
+  0x05e6e4dc  CActorInfo.CheckSavedSkinId(SkinElement)\
+  0x05ea1f90  HudComponent3D.SetLockedHighLightSpriteColor(Color)\
+  0x05f79234  GameInput.CalcDirectionByTouchPosition(...)\
+  0x05fdee5c  LobbyLogic.LateUpdate()\
+  0x0656e7c0  PhoneNotifySystem.FPSDrop(float dropVal, float curFPS)\
+  0x0678676c  ActorLinker.DestoryAllComponents()\
+  0x06786f60  ActorLinker.Update()\
+  0x06ac6014  CameraSystem.ScreenEraserCameraRemove(string name)\
+  0x06ac6c74  CameraSystem.get_MainCamera()\
+  0x06ac99f8  CameraSystem.StopDisplacement()\
+  0x072060e4  WebProxy.IsBypassedAuto(...)\
+  0x07365218  Screen.get_currentResolution_Injected(...)\
+  0x07365318  Screen.SetResolution(...)\
+  0x009f475c  COMDT_HERO_COMMON_INFO.pack(ref TdrWriteBuf, uint cutVer)\
+  0x009fc864  COMDT_TOP_OR_AREA_LEGEND_TITLE_INFO.pack(...)\
+  0x00c6f4c0  COMDT_CHOICEHERO.pack(ref TdrWriteBuf, uint cutVer)}
