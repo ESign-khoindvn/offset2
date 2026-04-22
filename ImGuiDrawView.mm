@@ -116,20 +116,20 @@ static bool MenDeal = true;
     // ── Map hack ──────────────────────────────────────────────────────────
     HOOK(hackmapoffset, LActorRoot_Visible, _LActorRoot_Visible);       // SetVisible (Hack Map)
 
-    // ── FPS unlock (new) ──────────────────────────────────────────────────
-    HOOK(ENCRYPTOFFSET("0x4e7b530"), get_Supported90FPSMode, _get_Supported90FPSMode); // 90 FPS
-    HOOK(ENCRYPTOFFSET("0x4e7b610"), get_Supported60FPSMode, _get_Supported60FPSMode); // 60 FPS
+    // ── FPS unlock — tạm disable, verify signature trước
+//    HOOK(ENCRYPTOFFSET("0x4e7b530"), get_Supported90FPSMode, _get_Supported90FPSMode);
+//    HOOK(ENCRYPTOFFSET("0x4e7b610"), get_Supported60FPSMode, _get_Supported60FPSMode);
 
-    // ── AnoSDK bypass (new) ───────────────────────────────────────────────
-    HOOK(ENCRYPTOFFSET("0x68ec1ec"), AnoSDKInitEx, _AnoSDKInitEx);      // Skip AnoSDK init
-    HOOK(ENCRYPTOFFSET("0x68ec534"), AnoSDKOnResume, _AnoSDKOnResume);  // Skip AnoSDK resume
+    // ── AnoSDK bypass — tạm disable, [extern] cần check MethodInfo* param
+//    HOOK(ENCRYPTOFFSET("0x68ec1ec"), AnoSDKInitEx, _AnoSDKInitEx);
+//    HOOK(ENCRYPTOFFSET("0x68ec534"), AnoSDKOnResume, _AnoSDKOnResume);
 
-    // ── Frame sync bypass (new) ───────────────────────────────────────────
-    HOOK(ENCRYPTOFFSET("0x47c9a4c"), CalcuBattleHash, _CalcuBattleHash);                          // Hash calc bypass
-    HOOK(ENCRYPTOFFSET("0x47c9ce8"), SampleAndSendFrameSyncData, _SampleAndSendFrameSyncData);    // Frame sync suppress
+    // ── Frame sync bypass — tạm disable, verify signature
+//    HOOK(ENCRYPTOFFSET("0x47c9a4c"), CalcuBattleHash, _CalcuBattleHash);
+//    HOOK(ENCRYPTOFFSET("0x47c9ce8"), SampleAndSendFrameSyncData, _SampleAndSendFrameSyncData);
 
-    // ── Rank patch (new) ──────────────────────────────────────────────────
-    HOOK(ENCRYPTOFFSET("0x5415ef0"), setCurrentRankDetail, _setCurrentRankDetail);                // Fake rank score
+    // ── Rank patch — tạm disable, verify signature
+//    HOOK(ENCRYPTOFFSET("0x5415ef0"), setCurrentRankDetail, _setCurrentRankDetail);
 }
 
 
